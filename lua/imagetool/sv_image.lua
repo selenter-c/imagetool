@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -10,14 +10,10 @@
         ——— Chop your own wood and it will warm you twice.
 ]]--
 
-
-ImageTool.config = "config.txt"
-
 -- Создаем файл с конфигом, если его нету
 if !file.Exists(ImageTool.path .. "/" .. ImageTool.config, "DATA") then
     file.Write(ImageTool.path .. "/" .. ImageTool.config, "{}")
 end
-
 
 
 -- Получаем конфиг
@@ -63,8 +59,8 @@ end
 function ImageTool:AddImage(data)
     if !data then return end
 
+    local config = self:GetConfig() or {}
     local map = game.GetMap()
-    local config = self:GetConfig()
 
     config[map] = config[map] or {}
     config[map][#config[map] + 1] = data -- Записываем
@@ -78,7 +74,7 @@ function ImageTool:RemoveImage(data)
     if !data then return end
 
     local pos = data.position
-    local config = ImageTool:GetConfig()
+    local config = ImageTool:GetConfig() or {}
     local map = game.GetMap()
 
     config[map] = config[map] or {}
@@ -105,7 +101,6 @@ function ImageTool:RemoveImage(data)
     local min = math.min(unpack(imagesPack))
     local imageMin = images[min]
 
-
     -- Если нашли — удаляем
     if imageMin and config[map][imageMin] then
         config[map][imageMin] = nil
@@ -116,4 +111,17 @@ function ImageTool:RemoveImage(data)
             net.WriteUInt(imageMin, 32)
         net.Broadcast()
     end
+end
+
+-- Удаляем все картинки из мира
+function ImageTool:RemoveImageAll()
+    local config = ImageTool:GetConfig() or {}
+    local map = game.GetMap()
+
+    config[map] = {}
+
+    ImageTool:SaveConfig(config)
+
+    net.Start("image.RemoveImageAll")
+    net.Broadcast()
 end

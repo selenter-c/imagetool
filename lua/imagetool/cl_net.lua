@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -24,7 +24,7 @@ net.Receive("image.SendImage", function()
     ImageTool.imageList[id] = info -- Добавляем
 
     if ImageTool:IsUsesTool(LocalPlayer()) then
-        LocalPlayer():ChatPrint(ImageTool.prefix .. " Image was added successfully!")
+        LocalPlayer():ChatPrint(ImageTool.prefix .. " Image was added successfully! (ID: " .. id .. ")")
     end
 end)
 
@@ -35,6 +35,36 @@ net.Receive("image.RemoveImage", function()
     ImageTool.imageList[id] = nil -- Удаляем
 
     if ImageTool:IsUsesTool(LocalPlayer()) then
-        LocalPlayer():ChatPrint(ImageTool.prefix .. " Image has been successfully deleted!")
+        LocalPlayer():ChatPrint(ImageTool.prefix .. " Image has been successfully deleted! (ID: " .. id .. ")")
     end
+end)
+
+-- Удаляем все картинки
+net.Receive("image.RemoveImageAll", function()
+    for id in pairs(ImageTool:GetImages()) do
+        ImageTool.imageList[id] = nil -- Удаляем
+    end
+
+    if ImageTool:IsUsesTool(LocalPlayer()) then
+        LocalPlayer():ChatPrint(ImageTool.prefix .. " All pictures have been removed from the world!")
+    end
+end)
+
+-- Сохраняем картинку в истории
+net.Receive("image.SaveImage", function()
+    local url = net.ReadString()
+
+    local history = ImageTool:GetHistory() or {}
+
+    -- Если такой url уже есть в истории, то не сохраняем
+    for k, v in ipairs(history) do
+        if v == url then
+            return
+        end
+    end
+
+    table.insert(history, url)
+    ImageTool:SaveHistory(history)
+
+    ImageTool:LoadingHistory()
 end)

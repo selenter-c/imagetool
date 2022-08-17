@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -27,6 +27,9 @@ ImageTool.cacheMaterials = ImageTool.cacheMaterials or {} -- Закеширов�
 ImageTool.requestList = ImageTool.requestList or {} -- Все запросы на сайты
 ImageTool.notifyErr = ImageTool.notifyErr or {} -- Сайты которые выдают ошибки
 ImageTool.imageList = ImageTool.imageList or {} -- Список картинок которые отображаются в мире
+
+ImageTool.config = "config.txt" -- файл с конфигом
+ImageTool.history = "history.txt" -- файл с иторией
 
 -- Создаем каталог с картинками
 file.CreateDir(ImageTool.path)

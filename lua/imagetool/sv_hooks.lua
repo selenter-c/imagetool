@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -14,7 +14,7 @@
 
 -- Отправляем только что подключившимуся игроку все картинки на карте
 hook.Add("PlayerInitialSpawn", "image.PlayerInitialSpawn", function(client)
-    local config = ImageTool:GetConfig()
+    local config = ImageTool:GetConfig() or {}
     local map = game.GetMap()
 
     config[map] = config[map] or {}

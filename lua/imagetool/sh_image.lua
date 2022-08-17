@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -10,7 +10,6 @@
 
         ——— Chop your own wood and it will warm you twice.
 ]]--
-
 
 -- Допустимые для загрузки расширения
 ImageTool.ValidExtension = {
@@ -58,6 +57,7 @@ function ImageTool:GetToolData(client)
     local imageHeight = tool:GetClientInfo("height")
     local imageScale = tool:GetClientInfo("scale")
     local imageBrightness = tool:GetClientInfo("brightness")
+    local imageAlpha = tool:GetClientInfo("alpha")
 
     imageURL = imageURL:gsub("cdn.discordapp.com", "media.discordapp.net") -- Fix Discord Cloudfire
 
@@ -69,6 +69,7 @@ function ImageTool:GetToolData(client)
         brightness = imageBrightness,
         position = position + angles:Up() * 0.5,
         angles = angles,
+        alpha = imageAlpha
     }
 
     return data

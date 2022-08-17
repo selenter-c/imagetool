@@ -1,8 +1,8 @@
 --[[
-        © Asterion Project 2021.
+        © AsterionStaff 2022.
         This script was created from the developers of the AsterionTeam.
         You can get more information from one of the links below:
-            Site - https://asterionproject.ru
+            Site - https://asterion.games
             Discord - https://discord.gg/CtfS8r5W3M
         
         developer(s):
@@ -15,7 +15,7 @@
 AddCSLuaFile()
 
 TOOL.Name = "Image Tool" -- Название
-TOOL.Category = "Render" -- Категория
+TOOL.Category = "Asterion Tools" -- Категория
 TOOL.Information = { -- Дополнительная информация
     {name = "left", stage = 0},
     {name = "right", stage = 0},
@@ -27,6 +27,7 @@ TOOL.ClientConVar.width = 100
 TOOL.ClientConVar.height = 100
 TOOL.ClientConVar.scale = 40
 TOOL.ClientConVar.brightness = 255
+TOOL.ClientConVar.alpha = 255
 
 -- Добавляем язык
 if CLIENT then
@@ -47,6 +48,11 @@ function TOOL:LeftClick()
     if !data then return end
 
     ImageTool:AddImage(data)
+    
+    -- я ненавижу predicted хуки!!! (приходится передавать по net-у, т.к. в одиночке этот хук не обрабатывается на клиенте)
+    net.Start("image.SaveImage")
+        net.WriteString(data.url)
+    net.Send(client)
 
     return true
 end
@@ -91,8 +97,6 @@ function TOOL.BuildCPanel(CPanel)
     NoticePanel:SetTextColor(Color(255,10,10,255))
     CPanel:AddPanel(NoticePanel)
 
-
-
     CPanel:AddControl("Slider", {
         Label = "Image Width:",
         Command = "imagetool_width",
@@ -101,13 +105,11 @@ function TOOL.BuildCPanel(CPanel)
     })
 
     local WidthDesc = vgui.Create("DLabel")
-    WidthDesc:SetText("In this slider, you can specify the size of the picture you need in width")
+    WidthDesc:SetText("In this slider, you can specify the size of the picture you need in width.")
     WidthDesc:SetWrap(true)
     WidthDesc:SetAutoStretchVertical(true)
     WidthDesc:SetTextColor(Color(10,149,255))
     CPanel:AddPanel(WidthDesc)
-
-
 
     CPanel:AddControl("Slider", {
         Label = "Image Height:",
@@ -117,13 +119,11 @@ function TOOL.BuildCPanel(CPanel)
     })
 
     local HeightDesc = vgui.Create("DLabel")
-    HeightDesc:SetText("In this slider, you can specify the size of the picture you need in height")
+    HeightDesc:SetText("In this slider, you can specify the size of the picture you need in height.")
     HeightDesc:SetWrap(true)
     HeightDesc:SetAutoStretchVertical(true)
     HeightDesc:SetTextColor(Color(10,149,255))
     CPanel:AddPanel(HeightDesc)
-
-
 
     CPanel:AddControl("Slider", {
         Label = "Image Scale:",
@@ -133,13 +133,11 @@ function TOOL.BuildCPanel(CPanel)
     })
 
     local ScaleDesc = vgui.Create("DLabel")
-    ScaleDesc:SetText("In this slider, you can resize the picture in height and width at the same time")
+    ScaleDesc:SetText("In this slider, you can resize the picture in height and width at the same time.")
     ScaleDesc:SetWrap(true)
     ScaleDesc:SetAutoStretchVertical(true)
     ScaleDesc:SetTextColor(Color(10,149,255))
     CPanel:AddPanel(ScaleDesc)
-
-
 
     CPanel:AddControl("Slider", {
         Label = "Image Brightness:",
@@ -154,6 +152,20 @@ function TOOL.BuildCPanel(CPanel)
     BrightnessDesc:SetAutoStretchVertical(true)
     BrightnessDesc:SetTextColor(Color(10,149,255))
     CPanel:AddPanel(BrightnessDesc)
+
+    CPanel:AddControl("Slider", {
+        Label = "Image Alpha:",
+        Command = "imagetool_alpha",
+        Min = 0,
+        Max = 255
+    })
+
+    local AlphaDesc = vgui.Create("DLabel")
+    AlphaDesc:SetText("This slider allows you to change the transparency of your images.")
+    AlphaDesc:SetWrap(true)
+    AlphaDesc:SetAutoStretchVertical(true)
+    AlphaDesc:SetTextColor(Color(10,149,255))
+    CPanel:AddPanel(AlphaDesc)
 
     local ImageSize = vgui.Create("DButton")
     ImageSize:SetText("Set the size settings as in the picture")
@@ -176,7 +188,6 @@ function TOOL.BuildCPanel(CPanel)
     end
     CPanel:AddPanel(ImageSize)
 
-
     local ResetButton = vgui.Create("DButton")
     ResetButton:SetText("Restore default settings")
     ResetButton.DoClick = function()
@@ -189,4 +200,19 @@ function TOOL.BuildCPanel(CPanel)
         RunConsoleCommand(l .. "brightness", 255)
     end
     CPanel:AddPanel(ResetButton)
+
+    CPanel:AddControl("Header",{
+        Description = "Your image history:"
+    })
+
+    local historyPanel = vgui.Create("DScrollPanel")
+    historyPanel:SetTall(300)
+    historyPanel.Paint = function(_, w, h)
+        surface.SetDrawColor(0, 0, 0)
+        surface.DrawOutlinedRect(0, 0, w, h)
+    end
+    CPanel:AddPanel(historyPanel)
+
+    ImageTool.historyPanel = historyPanel
+    ImageTool:LoadingHistory()
 end
