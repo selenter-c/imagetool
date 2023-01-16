@@ -47,6 +47,7 @@ function TOOL:LeftClick()
     -- Пытаемся получить данные из тулгана
     local data = ImageTool:GetToolData(client)
     if !data then return end
+    PrintTable(data)
     ImageTool:AddImage(data)
     
     -- я ненавижу predicted хуки!!! (приходится передавать по net-у, т.к. в одиночке этот хук не обрабатывается на клиенте)

@@ -259,11 +259,10 @@ function ImageTool:Start3D2D(data)
     local imageMaterial = self:LoadingURL(data.url)
     local w, h = tonumber(data.width), tonumber(data.height)
     local nsfw = tobool(data.nsfw)
-    local nsfwEnabled = tobool(cookie.GetString( "ImageTool.EnableNSFW" ))
     if !isnumber(w) or !isnumber(h) then return end -- number expected, got string
 
     -- Рисуем
-    if nsfw and !nsfwEnabled then
+    if nsfw and !ImageTool.drawNSFW:GetBool() then
         cam.Start3D2D(data.position, data.angles, scale)
             render.PushFilterMin(TEXFILTER.ANISOTROPIC)
             render.PushFilterMag(TEXFILTER.ANISOTROPIC)
@@ -272,6 +271,7 @@ function ImageTool:Start3D2D(data)
                     surface.SetDrawColor(255, alphaStr, 255)
                     surface.DrawRect(0, 0, w, h)
                     draw.DrawText("NSFW Content", "Default", w / 2, h / 2 - 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
+                    draw.DrawText('"imagetool_enable_nsfw 1" to enable', "Default", w / 2, h / 2 + 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
             render.PopFilterMag()
             render.PopFilterMin()
         cam.End3D2D()
