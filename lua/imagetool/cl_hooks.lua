@@ -131,3 +131,76 @@ hook.Add("PostDrawTranslucentRenderables", "ImageTool.PostDrawTranslucentRendera
 
     ImageTool:DrawImageTool() -- Тул-Ган отрисовка
 end)
+
+surface.CreateFont( "ImageToolNSWF", {
+    font = "Roboto",
+    size = 30,
+    weight = 500,
+    antialias = true,
+} )
+
+local function OpenNSFWSettings()
+    local enabled = tobool(cookie.GetString( "ImageTool.EnableNSFW" ))
+    local MainWindow = vgui.Create("DFrame")
+    MainWindow:SetSize(500, 150)
+    MainWindow:Center()
+    MainWindow:SetTitle("")
+    MainWindow:SetDraggable(false)
+    MainWindow:MakePopup()
+    
+    MainWindow.Paint = function(self, w, h)
+    
+        surface.SetDrawColor( 60, 60, 60, 255 )
+        surface.DrawRect( 0, 0, w, 37 )
+    
+        surface.SetDrawColor( 37, 37, 38, 255 )
+        surface.DrawRect( 0, 37, w, h )
+    
+        surface.SetDrawColor( 0, 0, 0, 255 )
+        surface.DrawOutlinedRect( 0, 0, w, h, 5 )
+        surface.DrawLine(0,37,w,37)
+    
+        surface.SetFont( "ImageToolNSWF" )
+        surface.SetTextColor( 160, 160, 160 )
+        surface.SetTextPos( 10, 7 ) 
+        surface.DrawText( "ImageTool" )
+    
+        surface.SetTextPos( 10, 50 ) 
+        surface.DrawText( "NSFW изображения:" )
+    
+        surface.SetTextPos( 245, 50 ) 
+        surface.SetTextColor( enabled and 0 or 230, enabled and 230 or 0, 0 )
+        surface.DrawText( enabled and "Включены" or "Отключены" )
+    
+    end
+    
+    local ToggleButton = vgui.Create( "DButton", MainWindow )
+    ToggleButton:SetText( "" )
+    ToggleButton:SetPos( 5, 100 )
+    ToggleButton:SetSize( 490, 40 )
+    
+    ToggleButton.Paint = function(self, w, h)
+        surface.SetDrawColor( 45, 45, 45, 255 )
+        surface.DrawRect( 0, 0, w, h )
+        surface.SetDrawColor( enabled and 0 or 230, enabled and 230 or 0, 0, 255 )
+        surface.DrawOutlinedRect( 0, 0, w, h, 2 )
+        surface.SetFont( "ImageToolNSWF" )
+        surface.SetTextColor( 150, 150, 150 )
+        local offsetx, offsety = surface.GetTextSize(enabled and "Выключить" or "Включить")
+        surface.SetTextPos( w/2-offsetx/2, h/2-offsety/2 ) 
+        surface.DrawText( enabled and "Выключить" or "Включить" )
+    end
+    
+    ToggleButton.DoClick = function()
+        enabled = !enabled
+        cookie.Set( "ImageTool.EnableNSFW", tostring(enabled) )
+    end
+end
+
+hook.Add( "InitPostEntity", "ImageTool.InitPostEntity", function()
+	if tostring(cookie.GetString( "ImageTool.EnableNSFW" )) == "nil" then
+       OpenNSFWSettings()
+    end
+end )
+
+concommand.Add("ImageTool_NSFW_Settings", function() OpenNSFWSettings() end)

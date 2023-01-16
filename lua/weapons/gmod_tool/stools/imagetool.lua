@@ -28,6 +28,7 @@ TOOL.ClientConVar.height = 100
 TOOL.ClientConVar.scale = 40
 TOOL.ClientConVar.brightness = 255
 TOOL.ClientConVar.alpha = 255
+TOOL.ClientConVar.nsfw = 0
 
 -- Добавляем язык
 if CLIENT then
@@ -46,7 +47,7 @@ function TOOL:LeftClick()
     -- Пытаемся получить данные из тулгана
     local data = ImageTool:GetToolData(client)
     if !data then return end
-
+    PrintTable(data)
     ImageTool:AddImage(data)
     
     -- я ненавижу predicted хуки!!! (приходится передавать по net-у, т.к. в одиночке этот хук не обрабатывается на клиенте)
@@ -167,6 +168,22 @@ function TOOL.BuildCPanel(CPanel)
     AlphaDesc:SetTextColor(Color(10,149,255))
     CPanel:AddPanel(AlphaDesc)
 
+    local NSWFCheckBox = vgui.Create( "DCheckBoxLabel" )
+    NSWFCheckBox:SetText("NSFW")
+    NSWFCheckBox:SetWrap(true)
+    NSWFCheckBox:SetConVar( "imagetool_nsfw" )
+    NSWFCheckBox:SetTextColor( color_black )
+
+    CPanel:AddPanel( NSWFCheckBox )
+
+    local NSFWDesc = vgui.Create("DLabel")
+    NSFWDesc:SetText("Is this NSFW content?")
+    NSFWDesc:SetWrap(true)
+    NSFWDesc:SetAutoStretchVertical(true)
+    NSFWDesc:SetTextColor(Color(10,149,255))
+    
+    CPanel:AddPanel(NSFWDesc)
+
     local ImageSize = vgui.Create("DButton")
     ImageSize:SetText("Set the size settings as in the picture")
     ImageSize.DoClick = function()
@@ -198,6 +215,7 @@ function TOOL.BuildCPanel(CPanel)
         RunConsoleCommand(l .. "height", 100)
         RunConsoleCommand(l .. "scale", 40)
         RunConsoleCommand(l .. "brightness", 255)
+        RunConsoleCommand(l .. "nsfw", 0)
     end
     CPanel:AddPanel(ResetButton)
 
