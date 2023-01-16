@@ -14,6 +14,7 @@
 
 -- Создаем конвар с настройкой прорисовки
 ImageTool.dist = CreateClientConVar("imagetool_dist", 1000, true, nil, "Change distance of drawing pictures")
+ImageTool.drawNSFW = CreateClientConVar("imagetool_enable_nsfw", 0, true, nil, "Enable NSFW images?(0 - enable, 1 - disable)", 0, 1)
 
 -- Менюшка с настройкой
 hook.Add( "PopulateToolMenu", "ImageTool.Menu", function()
@@ -32,6 +33,22 @@ hook.Add( "PopulateToolMenu", "ImageTool.Menu", function()
             Min = 0,
             Max = 10000
         })
+
+        local NSWFCheckBox = vgui.Create( "DCheckBoxLabel" )
+        NSWFCheckBox:SetText("Draw NSFW")
+        NSWFCheckBox:SetWrap(true)
+        NSWFCheckBox:SetConVar( "imagetool_enable_nsfw" )
+        NSWFCheckBox:SetTextColor( color_black )
+
+        CPanel:AddPanel( NSWFCheckBox )
+
+        local NSFWDesc = vgui.Create("DLabel")
+        NSFWDesc:SetText("Draw NSFW images?")
+        NSFWDesc:SetWrap(true)
+        NSFWDesc:SetAutoStretchVertical(true)
+        NSFWDesc:SetTextColor(Color(10,149,255))
+        
+        CPanel:AddPanel(NSFWDesc)
 
         local SettingsReset = vgui.Create("DButton")
         SettingsReset:SetText("Return to default settings")

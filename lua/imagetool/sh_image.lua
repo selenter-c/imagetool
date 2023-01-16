@@ -58,6 +58,7 @@ function ImageTool:GetToolData(client)
     local imageScale = tool:GetClientInfo("scale")
     local imageBrightness = tool:GetClientInfo("brightness")
     local imageAlpha = tool:GetClientInfo("alpha")
+    local imageNSFW = tool:GetClientInfo("nsfw")
 
     imageURL = imageURL:gsub("cdn.discordapp.com", "media.discordapp.net") -- Fix Discord Cloudfire
 
@@ -69,7 +70,8 @@ function ImageTool:GetToolData(client)
         brightness = imageBrightness,
         position = position + angles:Up() * 0.5,
         angles = angles,
-        alpha = imageAlpha
+        alpha = imageAlpha,
+        nsfw = imageNSFW
     }
 
     return data

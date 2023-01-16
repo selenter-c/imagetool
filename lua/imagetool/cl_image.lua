@@ -253,31 +253,45 @@ end
 -- Запускаем cam3d2d для отрисовки картинки
 function ImageTool:Start3D2D(data)
     if !data then return end
-
     local alpha = tonumber(data.alpha) or 255
     local scale = (tonumber(data.scale) or 40) / 100
     local brightness = tonumber(data.brightness) or 255
     local imageMaterial = self:LoadingURL(data.url)
-
     local w, h = tonumber(data.width), tonumber(data.height)
+    local nsfw = tobool(data.nsfw)
     if !isnumber(w) or !isnumber(h) then return end -- number expected, got string
 
     -- Рисуем
-    cam.Start3D2D(data.position, data.angles, scale)
-        render.PushFilterMin(TEXFILTER.ANISOTROPIC)
-        render.PushFilterMag(TEXFILTER.ANISOTROPIC)
-            if type(imageMaterial) == "IMaterial" and !imageMaterial:IsError() then -- Проверяем загрузилась ли картинка
-                surface.SetDrawColor(brightness, brightness, brightness, alpha)
-                surface.SetMaterial(imageMaterial)
-                surface.DrawTexturedRect(0, 0, w, h)
-            else
-                local alphaStr, dotStr = ImageTool:Anim()
+    if nsfw and !ImageTool.drawNSFW:GetBool() then
+        cam.Start3D2D(data.position, data.angles, scale)
+            render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+            render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+                    local alphaStr, dotStr = ImageTool:Anim()
 
-                surface.SetDrawColor(255, alphaStr, 255)
-                surface.DrawRect(0, 0, w, h)
-                draw.DrawText("Loading" .. dotStr, "Default", w / 2, h / 2 - 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
-            end
-        render.PopFilterMag()
-        render.PopFilterMin()
-    cam.End3D2D()
+                    surface.SetDrawColor(255, alphaStr, 255)
+                    surface.DrawRect(0, 0, w, h)
+                    draw.DrawText("NSFW Content", "Default", w / 2, h / 2 - 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
+                    draw.DrawText('"imagetool_enable_nsfw 1" to enable', "Default", w / 2, h / 2 + 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
+            render.PopFilterMag()
+            render.PopFilterMin()
+        cam.End3D2D()
+    else
+        cam.Start3D2D(data.position, data.angles, scale)
+            render.PushFilterMin(TEXFILTER.ANISOTROPIC)
+            render.PushFilterMag(TEXFILTER.ANISOTROPIC)
+                if type(imageMaterial) == "IMaterial" and !imageMaterial:IsError() then -- Проверяем загрузилась ли картинка
+                    surface.SetDrawColor(brightness, brightness, brightness, alpha)
+                    surface.SetMaterial(imageMaterial)
+                    surface.DrawTexturedRect(0, 0, w, h)
+                else
+                    local alphaStr, dotStr = ImageTool:Anim()
+
+                    surface.SetDrawColor(255, alphaStr, 255)
+                    surface.DrawRect(0, 0, w, h)
+                    draw.DrawText("Loading" .. dotStr, "Default", w / 2, h / 2 - 10, Color(alphaStr, 0, 0), TEXT_ALIGN_CENTER)
+                end
+            render.PopFilterMag()
+            render.PopFilterMin()
+        cam.End3D2D()
+    end
 end
